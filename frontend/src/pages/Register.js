@@ -6,8 +6,14 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     try {
       const res = await axios.post("/api/auth/register", {
         name,
@@ -84,6 +90,12 @@ export default function Register() {
             className="register-input"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            className="register-input"
+            placeholder="Confirm Password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <button className="register-button" onClick={handleRegister}>
             Register
