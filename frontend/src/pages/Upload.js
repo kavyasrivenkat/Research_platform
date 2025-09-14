@@ -5,11 +5,13 @@ import axios from "axios";
 export default function Upload() {
   const [file, setFile] = useState(null);
   const [groupId, setGroupId] = useState("");
+  const [groupName, setGroupName] = useState("");  // ✅ New state for group name
 
   const handleUpload = async () => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("group", groupId);
+    formData.append("groupId", groupId);
+    formData.append("groupName", groupName);  // ✅ Append group name also
 
     try {
       const token = localStorage.getItem("token");
@@ -77,16 +79,28 @@ export default function Upload() {
       <div className="upload-container">
         <div className="upload-card">
           <h2>Upload Resource</h2>
+
+          {/* ✅ Group ID field */}
           <input
             className="upload-input"
             placeholder="Group ID"
             onChange={(e) => setGroupId(e.target.value)}
           />
+
+          {/* ✅ Group Name field */}
+          <input
+            className="upload-input"
+            placeholder="Group Name"
+            onChange={(e) => setGroupName(e.target.value)}
+          />
+
+          {/* File input */}
           <input
             type="file"
             className="upload-file"
             onChange={(e) => setFile(e.target.files[0])}
           />
+
           <button className="upload-button" onClick={handleUpload}>
             Upload
           </button>
