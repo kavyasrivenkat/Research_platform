@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS_18"   // Make sure you configure this name in Jenkins -> Global Tool Configuration
+        nodejs "NodeJS_18"
     }
 
     environment {
@@ -11,24 +11,33 @@ pipeline {
     }
 
     stages {
+        stage('Cleanup') {
+            steps {
+                cleanWs()
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/kavyasrivenkat/Research_platform.git'
             }
         }
 
-        stage('Install Backend Dependencies') {
-            steps {
-                dir("${BACKEND_DIR}") {
-                    sh 'npm install'
+        stage('Install Dependencies') {
+            parallel {
+                stage('Backend') {
+                    steps {
+                        dir("${BACKEND_DIR}") {
+                            sh 'npm install'
+                        }
+                    }
                 }
-            }
-        }
-
-        stage('Install Frontend Dependencies') {
-            steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'npm install'
+                stage('Frontend') {
+                    steps {
+                        dir("${FRONTEND_DIR}") {
+                            sh 'npm install'
+                        }
+                    }
                 }
             }
         }
