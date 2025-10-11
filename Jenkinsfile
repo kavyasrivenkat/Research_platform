@@ -6,8 +6,8 @@ pipeline {
     }
 
     environment {
-        BACKEND_DIR = "server"
-        FRONTEND_DIR = "client"
+        BACKEND_DIR = "backend"
+        FRONTEND_DIR = "frontend"
     }
 
     stages {
@@ -67,10 +67,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build succeeded!'
+            echo 'Build succeeded!'
         }
         failure {
-            echo '❌ Build failed!'
+            echo 'Build failed!'
         }
     }
 }
