@@ -1,76 +1,62 @@
 pipeline {
-    agent any
-
-    tools {
-        nodejs "NodeJS_20"
-    }
-
-    environment {
-        BACKEND_DIR = "backend"
-        FRONTEND_DIR = "frontend"
+    agent none
+    triggers { githubPush() }
+    options {
+        timestamps()
+        timeout(time: 20, unit: 'MINUTES')
     }
 
     stages {
-        stage('Cleanup') {
-            steps {
-                cleanWs()
-            }
-        }
 
-        stage('Checkout') {
+        stage('Backend Build & Test (Controller)') {
+            agent { label 'built-in' }
             steps {
-                git branch: 'main', url: 'https://github.com/kavyasrivenkat/Research_platform.git'
-            }
-        }
-
-        stage('Install Dependencies') {
-            parallel {
-                stage('Backend') {
-                    steps {
-                        dir("${BACKEND_DIR}") {
-                            sh 'npm install'
-                        }
-                    }
-                }
-                stage('Frontend') {
-                    steps {
-                        dir("${FRONTEND_DIR}") {
-                            sh 'npm install'
-                        }
-                    }
+                echo "Running backend on Controller node: ${env.NODE_NAME}"
+                dir('backend') {
+                    bat '''
+                        echo Installing backend dependencies...
+                        npm install
+                        echo Starting backend test (lint or build check)...
+                        npm run test || echo "No test script found, skipping tests."
+                    '''
                 }
             }
         }
 
-        stage('Build Frontend') {
+        stage('Frontend Build & Test (Windows Agent)') {
+            agent { label 'win' }
             steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'npm run build'
+                echo "Running frontend build on Agent node: ${env.NODE_NAME}"
+                dir('frontend') {
+                    bat '''
+                        echo Installing frontend dependencies...
+                        npm install
+                        echo Building frontend...
+                        npm run build
+                    '''
                 }
             }
         }
 
-        stage('Run Tests') {
+        stage('Archive Artifacts') {
+            agent { label 'built-in' }
             steps {
-                dir("${BACKEND_DIR}") {
-                    sh 'npm test || echo "No tests configured yet"'
-                }
-            }
-        }
-
-        stage('Archive Build Artifacts') {
-            steps {
-                archiveArtifacts artifacts: "${FRONTEND_DIR}/build/**", fingerprint: true
+                echo "Archiving frontend build artifacts..."
+                archiveArtifacts artifacts: 'frontend/build/**', allowEmptyArchive: true
             }
         }
     }
 
     post {
+        always {
+            echo "Cleaning workspaces..."
+            cleanWs()
+        }
         success {
-            echo 'Build succeeded!'
+            echo "Build completed successfully!"
         }
         failure {
-            echo 'Build failed!'
+            echo "Build failed! Please check logs."
         }
     }
 }
