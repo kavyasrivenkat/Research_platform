@@ -1,18 +1,17 @@
 pipeline {
-    agent none    // we will assign agents per stage
+    agent none
     options {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
     }
     triggers {
-        githubPush()  // triggers build on GitHub push
+        githubPush()
     }
 
     stages {
 
-        // ===== Backend on Controller =====
         stage('Backend Build & Test (Controller)') {
-            agent { label 'built-in' }   // Controller node
+            agent { label 'built-in' }
             steps {
                 echo "Running backend on Controller node: ${env.NODE_NAME}"
                 dir('backend') {
@@ -25,9 +24,8 @@ pipeline {
             }
         }
 
-        // ===== Frontend on Windows Agent =====
         stage('Frontend Build & Test (Windows Agent)') {
-            agent { label 'win' }   // Windows agent
+            agent { label 'win' }
             steps {
                 echo "Running frontend on Windows agent: ${env.NODE_NAME}"
                 dir('frontend') {
@@ -44,8 +42,8 @@ pipeline {
 
     post {
         always {
-            // Cleanup workspace (must run inside a node context)
-            node {
+            // Specify label explicitly to fix error
+            node('built-in') {
                 echo "Cleaning workspace..."
                 cleanWs()
             }
