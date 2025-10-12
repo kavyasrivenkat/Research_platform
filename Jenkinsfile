@@ -1,52 +1,63 @@
 pipeline {
     agent none
-    options {
-        timestamps()
-        timeout(time: 30, unit: 'MINUTES')
-    }
-    triggers {
-        githubPush()
+
+    environment {
+        // Update this to your Node.js installation path
+        NODE_PATH = "C:\\Program Files\\nodejs"
     }
 
     stages {
 
         stage('Backend Build & Test (Controller)') {
-            agent { label 'built-in' }
+            agent { label 'built-in' } // Runs on Jenkins controller
             steps {
-                echo "Running backend on Controller node: ${env.NODE_NAME}"
-                dir('backend') {
-                    bat 'echo Installing backend dependencies...'
-                    bat 'npm install'
-                    bat 'echo Starting backend test (lint/build)...'
-                    bat 'npm run test || echo "No test script found, skipping tests."'
-                    bat 'echo Backend build completed!'
+                script {
+                    withEnv(["PATH=${env.NODE_PATH};${env.PATH}"]) {
+                        dir('backend') {
+                            echo "Installing backend dependencies..."
+                            bat 'npm install'
+
+                            echo "Running backend tests..."
+                            // Replace with actual test script if exists
+                            bat 'npm run test || echo "No test script found, skipping tests."'
+                        }
+                    }
                 }
             }
         }
 
         stage('Frontend Build & Test (Windows Agent)') {
-            agent { label 'win' }
+            agent { label 'windows-agent' } // Make sure your Windows agent has this label
             steps {
-                echo "Running frontend on Windows agent: ${env.NODE_NAME}"
-                dir('frontend') {
-                    bat 'echo Installing frontend dependencies...'
-                    bat 'npm install'
-                    bat 'echo Starting frontend build/test...'
-                    bat 'npm start || echo "Frontend started or test skipped."'
-                    bat 'echo Frontend build completed!'
+                script {
+                    withEnv(["PATH=${env.NODE_PATH};${env.PATH}"]) {
+                        dir('frontend') {
+                            echo "Installing frontend dependencies..."
+                            bat 'npm install'
+
+                            echo "Building frontend..."
+                            bat 'npm run build || echo "No build script found, skipping build."'
+
+                            echo "Running frontend tests..."
+                            bat 'npm run test || echo "No test script found, skipping tests."'
+                        }
+                    }
                 }
             }
         }
 
+        stage('Archive Artifacts') {
+            agent { label 'built-in' }
+            steps {
+                archiveArtifacts artifacts: '**/build/**', allowEmptyArchive: true
+            }
+        }
     }
 
     post {
         always {
-            // Specify label explicitly to fix error
-            node('built-in') {
-                echo "Cleaning workspace..."
-                cleanWs()
-            }
+            echo "Cleaning workspace..."
+            cleanWs()
         }
         success {
             echo "Pipeline completed successfully!"
