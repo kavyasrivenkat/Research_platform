@@ -1,46 +1,39 @@
 pipeline {
-    agent none
+    agent none  // we will specify nodes per stage
 
     environment {
-        // Update this to your Node.js installation path
-        NODE_PATH = "C:\\Program Files\\nodejs"
+        // Add any env variables you need here
+        NODE_ENV = 'development'
     }
 
     stages {
 
         stage('Backend Build & Test (Controller)') {
-            agent { label 'built-in' } // Runs on Jenkins controller
+            agent { label 'built-in' }  // Replace with your actual node label if needed
             steps {
                 script {
-                    withEnv(["PATH=${env.NODE_PATH};${env.PATH}"]) {
-                        dir('backend') {
-                            echo "Installing backend dependencies..."
-                            bat 'npm install'
+                    dir('backend') {
+                        echo "Installing backend dependencies..."
+                        bat 'npm install'
 
-                            echo "Running backend tests..."
-                            // Replace with actual test script if exists
-                            bat 'npm run test || echo "No test script found, skipping tests."'
-                        }
+                        echo "Running backend tests..."
+                        // Skip if no test script
+                        bat 'npm run test || echo "No test script found, skipping tests."'
                     }
                 }
             }
         }
 
         stage('Frontend Build & Test (Windows Agent)') {
-            agent { label 'windows-agent' } // Make sure your Windows agent has this label
+            agent { label 'windows' }  // Replace with your frontend build agent label
             steps {
                 script {
-                    withEnv(["PATH=${env.NODE_PATH};${env.PATH}"]) {
-                        dir('frontend') {
-                            echo "Installing frontend dependencies..."
-                            bat 'npm install'
+                    dir('frontend') {
+                        echo "Installing frontend dependencies..."
+                        bat 'npm install'
 
-                            echo "Building frontend..."
-                            bat 'npm run build || echo "No build script found, skipping build."'
-
-                            echo "Running frontend tests..."
-                            bat 'npm run test || echo "No test script found, skipping tests."'
-                        }
+                        echo "Running frontend tests..."
+                        bat 'npm run test || echo "No frontend test script found, skipping tests."'
                     }
                 }
             }
@@ -49,15 +42,18 @@ pipeline {
         stage('Archive Artifacts') {
             agent { label 'built-in' }
             steps {
-                archiveArtifacts artifacts: '**/build/**', allowEmptyArchive: true
+                echo "Archiving artifacts..."
+                archiveArtifacts artifacts: '**/dist/**', allowEmptyArchive: true
             }
         }
     }
 
     post {
         always {
-            echo "Cleaning workspace..."
-            cleanWs()
+            node { // Important: cleanWs needs a node context
+                echo "Cleaning workspace..."
+                cleanWs()
+            }
         }
         success {
             echo "Pipeline completed successfully!"
