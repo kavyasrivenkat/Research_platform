@@ -49,17 +49,16 @@ pipeline {
     }
 
     post {
-        always {
-            node { // Important: cleanWs needs a node context
-                echo "Cleaning workspace..."
-                cleanWs()
-            }
-        }
-        success {
-            echo "Pipeline completed successfully!"
-        }
-        failure {
-            echo "Pipeline failed! Check logs for details."
-        }
+    always {
+        echo "Cleaning workspace..."
+        cleanWs()
     }
+    success {
+        echo "Pipeline completed successfully!"
+    }
+    failure {
+        echo "Pipeline failed! Check logs for details."
+    }
+}
+
 }
