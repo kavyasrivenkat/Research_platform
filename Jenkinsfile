@@ -1,5 +1,5 @@
 pipeline {
-    agent none  // we will specify nodes per stage
+    agent any  // we will specify nodes per stage
 
     environment {
         // Add any env variables you need here
