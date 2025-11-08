@@ -20,7 +20,7 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/resources', resourceRoutes);
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://shankaravadhulasa_db_user:Shankara108*@cluster0.s2dlb3v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect('mongodb+srv://shankaravadhulasa_db_user:Shankara108*@cluster0.bmvpnxt.mongodb.net/?appName=Cluster0', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
