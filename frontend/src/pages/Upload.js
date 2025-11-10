@@ -15,7 +15,7 @@ export default function Upload() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("/api/resources/upload", formData, {
+      const res = await axios.post("http:/34.180.43.217:5000/api/resources/upload", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

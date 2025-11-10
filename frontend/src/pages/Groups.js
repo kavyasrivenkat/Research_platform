@@ -10,7 +10,7 @@ export default function Groups() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "/api/groups",
+        "http:/34.180.43.217:5000/api/groups",
         { name, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );

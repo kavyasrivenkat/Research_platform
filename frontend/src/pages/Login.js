@@ -8,7 +8,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("/api/auth/login", { email, password });
+      const res = await axios.post("http:/34.180.43.217:5000/api/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
       alert("Login successful!");
     } catch (err) {

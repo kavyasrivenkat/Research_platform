@@ -15,7 +15,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post("/api/auth/register", {
+      await axios.post("http:/34.180.43.217:5000/api/auth/register", {
         name,
         email,
         password,

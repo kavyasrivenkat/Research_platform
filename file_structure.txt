@@ -1,0 +1,52 @@
+﻿|-- backend
+  |-- middleware
+    |-- auth.js
+  |-- models
+    |-- Group.js
+    |-- Resource.js
+    |-- User.js
+  |-- routes
+    |-- auth.js
+    |-- groups.js
+    |-- resources.js
+  |-- uploads
+  |-- .dockerignore
+  |-- Dockerfile
+  |-- package-lock.json
+  |-- package.json
+  |-- server.js
+|-- frontend
+  |-- public
+    |-- favicon.ico
+    |-- index.html
+    |-- logo192.png
+    |-- logo512.png
+    |-- manifest.json
+    |-- robots.txt
+  |-- src
+    |-- components
+      |-- Navbar.js
+    |-- pages
+      |-- Groups.js
+      |-- Home.js
+      |-- Login.js
+      |-- Register.js
+      |-- Upload.js
+    |-- App.css
+    |-- App.js
+    |-- App.test.js
+    |-- index.css
+    |-- index.js
+    |-- logo.svg
+    |-- reportWebVitals.js
+    |-- setupTests.js
+  |-- .gitignore
+  |-- Dockerfile
+  |-- package-lock.json
+  |-- package.json
+|-- .gitignore
+|-- docker-compose.yml
+|-- file_structure.txt
+|-- generate_structure.bat
+|-- Jenkinsfile
+|-- README.md
