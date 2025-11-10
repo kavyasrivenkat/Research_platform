@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: research-frontend-service
+  labels:
+    app: research-frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: research-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http

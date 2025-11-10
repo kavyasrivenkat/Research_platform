@@ -15,7 +15,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post("https://research-backend-485763709061.us-central1.run.app/api/auth/register", {
+      await axios.post("http:/34.180.43.217:5000/api/auth/register", {
         name,
         email,
         password,
